@@ -342,7 +342,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     }
 
     /**
-     * Sets the encoder resolution in ticks per mm of the odometry pods. <br>
+     * Sets the encoder resolution in ticks per mm of the odometry ถ. <br>
      * You can find this number by dividing the counts-per-revolution of your encoder by the circumference of the wheel.
      * @param ticks_per_mm should be somewhere between 10 ticks/mm and 100 ticks/mm a goBILDA Swingarm pod is ~13.26291192
      */
