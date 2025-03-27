@@ -224,7 +224,7 @@ public class Teleop extends LinearOpMode {
                 SL.setPosition(0.77);
                 Gripper.setPosition(0.8);
                 Smid.setPosition(0.67);
-                SRG.setPosition(0.15);
+                SRG.setPosition(0.2);
             } else if (gamepad1.y || gamepad2.y) {
                 Gripper.setPosition(0.1);
                 Thread.sleep(70);
@@ -233,12 +233,12 @@ public class Teleop extends LinearOpMode {
                 SR.setPosition(0.70);
                 Gripper.setPosition(0.215);
             } else if (posL > 2500) {
-                SRG.setPosition(0.57);
+                SRG.setPosition(0.73);
                 Smid.setPosition(0.98);
                 SR.setPosition(0.53);
                 SL.setPosition(0.47);
             } else if (gamepad1.x || gamepad2.x){
-                SRG.setPosition(0.57);
+                SRG.setPosition(0.73);
                 Gripper.setPosition(0.7);
                 Smid.setPosition(0.35);
                 SL.setPosition(0.2);
