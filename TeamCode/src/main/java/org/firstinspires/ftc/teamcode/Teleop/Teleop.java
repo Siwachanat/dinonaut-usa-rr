@@ -16,6 +16,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+
+import java.net.CacheRequest;
+
 @TeleOp(name = "ATeleopManual", group = "TeleOp")
 
 public class Teleop extends LinearOpMode {
@@ -140,9 +143,9 @@ public class Teleop extends LinearOpMode {
                 S0.setPosition(1);
             } else if (gamepad1.dpad_down) {
 
-                S0.setPosition(0.42);
+                S0.setPosition(0.39);
                 Thread.sleep(245);
-                S0.setPosition(0.7);
+                S0.setPosition(0.55);
                 S5.setPosition(0.805);
                 S1.setPosition(0.5);
                 Thread.sleep(150);
@@ -189,8 +192,9 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.left_bumper) {
                 S4.setPosition(0.5);
-                S1.setPosition(1);
-                S0.setPosition(1);
+                Thread.sleep(10);
+                S1.setPosition(0.95);
+                S0.setPosition(5);
                 Thread.sleep(100);
                 S5.setPosition(0);
             } else if (gamepad1.right_bumper){
@@ -208,6 +212,13 @@ public class Teleop extends LinearOpMode {
 
             } else if (gamepad2.right_bumper){
                 Gripper.setPosition(0.8);
+                liftL.setPower(1);
+                liftR.setPower(-1);
+                Thread.sleep(200);
+                SL.setPosition(0.135);
+                SR.setPosition(0.865);
+                liftL.setPower(0);
+                liftR.setPower(0);
             } else if (gamepad1.b || gamepad2.b){
                 SL.setPosition(0.135);
                 SR.setPosition(0.865);
@@ -215,13 +226,22 @@ public class Teleop extends LinearOpMode {
                 Gripper.setPosition(0.1);
                 S0.setPosition(1);
                 Thread.sleep(200);
-                SL.setPosition(0.5);
-                SR.setPosition(0.5);
+                SL.setPosition(0.43);
+                SR.setPosition(0.57);
                 // Rot 0
                 SRG.setPosition(0.15);
+                if (posL > 3000){
+                    liftL.setPower(1);
+                    liftR.setPower(-1);
+                } else {
+                    liftL.setPower(0.07);
+                    liftR.setPower(-0.07);
+                }
+
+
             }else if (gamepad1.a || gamepad2.a) {
-                SR.setPosition(0.23);
-                SL.setPosition(0.77);
+                SR.setPosition(0.2);
+                SL.setPosition(0.8);
                 Gripper.setPosition(0.8);
                 Smid.setPosition(0.67);
                 SRG.setPosition(0.2);
@@ -229,14 +249,14 @@ public class Teleop extends LinearOpMode {
                 Gripper.setPosition(0.1);
                 Thread.sleep(70);
                 Smid.setPosition(0.72);
-                SL.setPosition(0.30);
-                SR.setPosition(0.70);
+                SL.setPosition(0.33);
+                SR.setPosition(0.67);
                 Gripper.setPosition(0.215);
             } else if (posL > 2500) {
                 SRG.setPosition(0.73);
                 Smid.setPosition(0.98);
-                SR.setPosition(0.53);
-                SL.setPosition(0.47);
+                SR.setPosition(0.57);
+                SL.setPosition(0.43);
             } else if (gamepad1.x || gamepad2.x){
                 SRG.setPosition(0.73);
                 Gripper.setPosition(0.7);
@@ -249,16 +269,21 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.left_trigger > 0.2 || gamepad2.dpad_down){
                 liftR.setPower(1);
                 liftL.setPower(-1);
+                LiftReference = 0;
+                posL = 0;
             } else if (gamepad1.right_trigger > 0.2 || gamepad2.dpad_up) {
 //                Smid.setPosition(0);
                 liftR.setPower(-1);
                 liftL.setPower(1);
 //                Thread.sleep(550);
 //                Gripper.setPosition(0.8);
-            }else {
+            }else if (posL > 1800){
 
                 liftR.setPower(0.08);
                 liftL.setPower(0.08);
+            }else {
+                liftR.setPower(0.05);
+                liftL.setPower(0.05);
             }
 
 

@@ -22,13 +22,20 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.LLStatus;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 
 @Config
 @Autonomous(name = "RED_AUTO6", group = "Autonomous")
 public class RedSideAuto6 extends LinearOpMode {
+    Limelight3A limelight;
+
+
 
     public class Lift {
         private DcMotorEx liftR;
@@ -323,15 +330,28 @@ public class RedSideAuto6 extends LinearOpMode {
                 return false;
             }
         }
+
         public Action grippush() {
             return new Grippush();
         }
+
     }
 
 
 
     @Override
     public void runOpMode() {
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(10); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.pipelineSwitch(2); // Switch to pipeline number 0
+        LLResult result = limelight.getLatestResult();
+
+        double tx = result.getTx(); // How far left or right the target is (degrees)
+        double ty = result.getTy(); // How far up or down the target is (degrees)
+        double ta = result.getTa();
+
+
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
         Pose2d second = new Pose2d(31.75,0,Math.toRadians(0));
         Pose2d third = new Pose2d(6.4,-35,Math.toRadians(0));
@@ -343,12 +363,19 @@ public class RedSideAuto6 extends LinearOpMode {
         Pose2d sev = new Pose2d(31.75,-4,Math.toRadians(0));
         Pose2d exx = new Pose2d(31.75,-4.5,Math.toRadians(0));
 
+
+
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Lift lift = new Lift(hardwareMap);
         Mission mission = new Mission(hardwareMap);
 
         TrajectoryActionBuilder Tomid = drive.actionBuilder (initialPose)
-                .splineToSplineHeading(new Pose2d(31.5,0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-60,80));
+                .splineToSplineHeading(new Pose2d(2,0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-60,80));
+        limelight.start(); // This tells Limelight to start looking!
+        TrajectoryActionBuilder Tosub = drive.actionBuilder (second)
+                .strafeTo(new Vector2d(2,tx),null,new ProfileAccelConstraint(-30,30));
+
+
         TrajectoryActionBuilder Tosam1 = drive.actionBuilder (second)
                 //.strafeTo(new Vector2d(26,-8),null,new ProfileAccelConstraint(-100,100))
                 .splineToSplineHeading(new Pose2d(26,-0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-100,100))
@@ -430,6 +457,8 @@ public class RedSideAuto6 extends LinearOpMode {
         Action Sam8;
         Action Sam9;
         Action Sam10;
+        Action sub;
+
 
 
 
@@ -446,6 +475,8 @@ public class RedSideAuto6 extends LinearOpMode {
         Sam8 = Tosam8.build();
         Sam9 = Tosam9.build();
         Sam10 = Tosam10.build();
+        sub = Tosub.build();
+
 
 
 
@@ -456,19 +487,21 @@ public class RedSideAuto6 extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new ParallelAction(
-                                mission.slideFullUP(),
-                                Middle,//first speciment Trjectory Moving Path
-                                mission.set() //Set Top gripper Ready to ng speciment
+                                //mission.slideFullUP(),
+                                Middle//first speciment Trjectory Moving Path
+                                //mission.set() //Set Top gripper Ready to ng speciment
                         ),
-                        mission.grippush(),
-                        new ParallelAction(
 
-                                mission.releases(),
-                                mission.slideIN(),
-                                new SequentialAction(
-                                        new SleepAction(1.5),
-                                        mission.armMid()
-                                )
+                        //mission.grippush(),
+                        new ParallelAction(
+                                sub
+
+//                                mission.releases(),
+//                                mission.slideIN(),
+//                                new SequentialAction(
+//                                        new SleepAction(1.5),
+//                                        mission.armMid()
+                                // )
                         ),
 
 
