@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -25,6 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -33,16 +33,11 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 
+
 @Config
-@Autonomous(name = "BLUE_limelightauto_6", group = "Autonomous")
-public class RedSideAuto6 extends LinearOpMode {
-
-
-    public Limelight3A limelight;
-
-    public int adjX = 260;
-
-    public ServoInterpolator ITPS;
+@Autonomous(name = "Limelight Auto", group = "Autonomous")
+public class limelightauto extends LinearOpMode {
+    Limelight3A limelight;
 
     public class GBlight {
         private Servo light;
@@ -70,8 +65,6 @@ public class RedSideAuto6 extends LinearOpMode {
             return new LSet0();
         }
     }
-
-
 
     public class Lift {
         private DcMotorEx liftR;
@@ -182,7 +175,6 @@ public class RedSideAuto6 extends LinearOpMode {
         }
     }
     public class Mission {
-        public Servo Sllc;
         public Servo S0;
         public Servo S1;
         public Servo S4;
@@ -204,7 +196,6 @@ public class RedSideAuto6 extends LinearOpMode {
             SL = hardwareMap.get(Servo.class, "SL");
             Gripper = hardwareMap.get(Servo.class, "Gripper");
             Sarm = hardwareMap.get(Servo.class, "Sarm");
-            Sllc = hardwareMap.get(Servo.class,"Sllc");
         }
         public class Set implements Action {
             @Override
@@ -212,9 +203,9 @@ public class RedSideAuto6 extends LinearOpMode {
                 Gripper.setPosition(0.08);
                 sleep(70);
                 Smid.setPosition(0.72);
-                SL.setPosition(0.315);
-                SR.setPosition(0.685);
-                Gripper.setPosition(0.168);
+                SL.setPosition(0.3225);
+                SR.setPosition(0.6675);
+                Gripper.setPosition(0.17);
                 return false;
             }
         }
@@ -228,9 +219,9 @@ public class RedSideAuto6 extends LinearOpMode {
                 Gripper.setPosition(0.08);
                 sleep(70);
                 Smid.setPosition(0.72);
-                SL.setPosition(0.315);
-                SR.setPosition(0.685);
-                Gripper.setPosition(0.168);
+                SL.setPosition(0.3225);
+                SR.setPosition(0.6675);
+                Gripper.setPosition(0.17);
                 return false;
             }
         }
@@ -241,8 +232,8 @@ public class RedSideAuto6 extends LinearOpMode {
         public class Re implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                SR.setPosition(0.208);
-                SL.setPosition(0.792);
+                SR.setPosition(0.215);
+                SL.setPosition(0.785);
                 sleep(250);
                 Gripper.setPosition(0.8);
                 Smid.setPosition(0.67);
@@ -268,56 +259,89 @@ public class RedSideAuto6 extends LinearOpMode {
             return new Mid();
         }
 
+        public class Slidebyrange implements Action {
+            private double s0Position;// position 0 = ยืดสุด
+
+            public Slidebyrange(double s0Position) {
+                this.s0Position = s0Position;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                S4.setPosition(0.5);
+                S1.setPosition(0);
+                S0.setPosition(1);
+                S5.setPosition(s0Position);
+                return false;
+            }
+        }
+
+        public Action slidebyrange(double s0Position) {
+            return new Slidebyrange(s0Position);
+        }
+
+        public class Gripsampar implements Action {
+
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                S4.setPosition(1);
+
+                return false;
+            }
+        }
+        public Action gripsampar() {
+            return new Gripsampar();
+        }
+
+
+        public class Gripsamperp implements Action {
+
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                S4.setPosition(0.5);
+
+                return false;
+            }
+        }
+        public Action gripsamperp() {
+            return new Gripsamperp();
+        }
+
+        public class Gripdown implements Action{
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+
+                S0.setPosition(0.55);
+
+                return false;
+            }
+        }
+        public Action gripdown() {
+            return new Gripdown();
+        }
+
         public class SlideFullUP implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 S4.setPosition(0.5);
-                S1.setPosition(1);
+                S1.setPosition(0);
                 S0.setPosition(1);
-                sleep(50);
-                S5.setPosition(0);
+                S5.setPosition(0.55);
                 return false;
             }
         }
         public Action slideFullUP() {
             return new SlideFullUP();
         }
-        public class SlideUP implements Action {
-            private double s4,s5;// position 0 = ยืดสุด
-
-            public SlideUP(double s4, double s5) {
-                this.s4 = s4;
-                this.s5 = s5;
-            }
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-
-                S4.setPosition(s4);
-                S1.setPosition(1);
-                S0.setPosition(1);
-                sleep(50);
-                S5.setPosition(s5);
-
-
-                return false;
-            }
-        }
-
-        public Action slideUP(double s4,double s5) {
-            return new SlideUP(s4,s5);
-        }
         public class SlideIN implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                S0.setPosition(0.28);
-                sleep(245);
-                S0.setPosition(0.6);
-                S5.setPosition(0.805);
-                S1.setPosition(0.5);
-                sleep(150);
+                S5.setPosition(0.85);
                 S1.setPosition(0);
-                S4.setPosition(1);
+                S4.setPosition(0.97);
                 return false;
             }
         }
@@ -329,7 +353,7 @@ public class RedSideAuto6 extends LinearOpMode {
         public class ArmDown implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                Sarm.setPosition(0.045);
+                Sarm.setPosition(0.065);
                 return false;
             }
         }
@@ -337,16 +361,6 @@ public class RedSideAuto6 extends LinearOpMode {
             return new ArmDown();
         }
 
-        public class ArmMid implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                Sarm.setPosition(0.15);
-                return false;
-            }
-        }
-        public Action armMid() {
-            return new ArmMid();
-        }
         public class ArmUp implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -383,26 +397,6 @@ public class RedSideAuto6 extends LinearOpMode {
         public Action reGrip() {
             return new ReGrip();
         }
-
-        public class Grippush implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                S0.setPosition(0.42);
-                sleep(245);
-                S0.setPosition(0.7);
-                S5.setPosition(0.805);
-                S1.setPosition(0.5);
-                sleep(150);
-                S1.setPosition(0);
-                S4.setPosition(1);
-                return false;
-            }
-        }
-
-        public Action grippush() {
-            return new Grippush();
-        }
-
     }
 
 
@@ -416,90 +410,75 @@ public class RedSideAuto6 extends LinearOpMode {
         limelight.setPollRateHz(10); // This sets how often we ask Limelight for data (100 times per second)
         // This tells Limelight to start looking!
         limelight.start();
-        limelight.pipelineSwitch(3); // Switch to pipeline number 0
-        Servo s0_grip = hardwareMap.get(Servo.class, "S0");
-        Servo s1_arm_rot = hardwareMap.get(Servo.class, "S1");
-        Servo s5_arm_range = hardwareMap.get(Servo.class, "S5");
-        Servo s4_hand_rot = hardwareMap.get(Servo.class, "S4");
-        Servo light = hardwareMap.get(Servo.class, "light");
-        Servo Sllc = hardwareMap.get(Servo.class, "Sllc");
-        Sllc.setPosition(0.98);
-
-
+        limelight.pipelineSwitch(1); // Switch to pipeline number 0
+        limelight.pipelineSwitch(0); // Switch to pipeline number 0
 
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
-        Pose2d second = new Pose2d(31.75,0,Math.toRadians(0));
-        Pose2d third = new Pose2d(6.4,-35,Math.toRadians(0));
-        Pose2d forth = new Pose2d(31.75,-2,Math.toRadians(0));
+        Pose2d second = new Pose2d(30.75,0,Math.toRadians(0));
+        Pose2d third = new Pose2d(5.5,-35,Math.toRadians(0));
+        Pose2d forth = new Pose2d(30.75,-2,Math.toRadians(0));
         Pose2d forthfixed = new Pose2d(25,-2,Math.toRadians(0));
-        Pose2d fifth = new Pose2d(7,-35,Math.toRadians(0));
-        Pose2d fifth2 = new Pose2d(7,-35,Math.toRadians(0));
-        Pose2d six = new Pose2d(31.75,2,Math.toRadians(0));
-        Pose2d sev = new Pose2d(31.75,-4,Math.toRadians(0));
-        Pose2d exx = new Pose2d(31.75,-4.5,Math.toRadians(0));
-
+        Pose2d fifth = new Pose2d(6.2,-35,Math.toRadians(0));
+        Pose2d fifth2 = new Pose2d(6.2,-35,Math.toRadians(0));
+        Pose2d six = new Pose2d(30.75,2,Math.toRadians(0));
+        Pose2d sev = new Pose2d(30.75,-4,Math.toRadians(0));
+        Pose2d exx = new Pose2d(30.75,-3,Math.toRadians(0));
 
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Lift lift = new Lift(hardwareMap);
         Mission mission = new Mission(hardwareMap);
+        GBlight gBlight = new GBlight(hardwareMap);
 
         TrajectoryActionBuilder Tomid = drive.actionBuilder (initialPose)
-                .splineToSplineHeading(new Pose2d(31.5,0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-60,80));
-        limelight.start(); // This tells Limelight to start looking!
-//        TrajectoryActionBuilder Tosub = drive.actionBuilder (second)
-//                .strafeTo(new Vector2d(2,tx),null,new ProfileAccelConstraint(-30,30));
-
-
+                .splineToSplineHeading(new Pose2d(30.75,0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-60,80));
         TrajectoryActionBuilder Tosam1 = drive.actionBuilder (second)
                 //.strafeTo(new Vector2d(26,-8),null,new ProfileAccelConstraint(-100,100))
                 .splineToSplineHeading(new Pose2d(26,-0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-100,100))
-                .splineToLinearHeading(new Pose2d(8.5,-25,-Math.PI*5.5/6 ),-Math.PI*1.5,new TranslationalVelConstraint(100))
-                .stopAndAdd(mission.slideFullUP())
-                .stopAndAdd(mission.slideIN())
-                .splineToLinearHeading(new Pose2d(3.5,-30,-Math.PI/3.5 ),-Math.PI*1.5,new TranslationalVelConstraint(100))
-                .stopAndAdd(mission.armDown())
-                .splineToLinearHeading(new Pose2d(21 ,-34,-Math.PI*4.5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
+                .splineToConstantHeading(new Vector2d(24,-16),-Math.PI*0.5,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(30.5,-30,-Math.PI/3.5 ),-Math.PI*1.5,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(18 ,-35.5,-Math.PI*4.3/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
+
                 .splineToLinearHeading(new Pose2d(30,-34.5,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
-                .splineToLinearHeading(new Pose2d(32,-40,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
-                .splineToLinearHeading(new Pose2d(21,-40,-Math.PI*5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(33,-40,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(21,-40,-Math.PI*4.5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
 
                 .splineToLinearHeading(new Pose2d(30,-42,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
-                .splineToLinearHeading(new Pose2d(32,-46,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
-                .splineToLinearHeading(new Pose2d(21,-46.5,-Math.PI*5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(33,-45.5,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(21,-46,-Math.PI*4.5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
 
-                .splineToLinearHeading(new Pose2d(6.4 ,-35,-Math.PI*2),-Math.PI*1.5,new TranslationalVelConstraint(90));
+                .splineToLinearHeading(new Pose2d(5.5 ,-35,-Math.PI*2),-Math.PI*1.5,new TranslationalVelConstraint(90));
 
         TrajectoryActionBuilder Tosam2 = drive.actionBuilder (third)
-                .strafeTo(new Vector2d(31.75,-2),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(30.75,-2),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam3 = drive.actionBuilder (forth)
                 .splineToConstantHeading(new Vector2d(25,-2),Math.PI*2,new TranslationalVelConstraint(80));
 
         TrajectoryActionBuilder Tosam3fix = drive.actionBuilder (forthfixed)
-                .strafeTo(new Vector2d(7,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(6.2,-35),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam4 = drive.actionBuilder (fifth2)
-                .strafeTo(new Vector2d(31.75,2),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(30.75,2),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam5 = drive.actionBuilder (six)
-                .strafeTo(new Vector2d(7,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(6.2,-35),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam6 = drive.actionBuilder (fifth)
 
-                .strafeTo(new Vector2d(31.75,-4),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(30.75,-4),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam7 = drive.actionBuilder (sev)
 
-                .strafeTo(new Vector2d(7,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(6.2,-35),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam8 = drive.actionBuilder (fifth)
 
-                .strafeTo(new Vector2d(31.75,-4.5),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(30.75,-3),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam9 = drive.actionBuilder (exx)
 
-                .strafeTo(new Vector2d(7,-45),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(6.2,-45),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam10 = drive.actionBuilder (fifth)
                 .splineToSplineHeading( new Pose2d(-54,-50,-Math.PI/2),-Math.PI*1.4,new TranslationalVelConstraint(90))
@@ -532,8 +511,6 @@ public class RedSideAuto6 extends LinearOpMode {
         Action Sam8;
         Action Sam9;
         Action Sam10;
-        Action sub;
-
 
 
 
@@ -550,148 +527,186 @@ public class RedSideAuto6 extends LinearOpMode {
         Sam8 = Tosam8.build();
         Sam9 = Tosam9.build();
         Sam10 = Tosam10.build();
-        //sub = Tosub.build();
 
-        int s = 242;
-
-        int rnd = 0;
-        limelight.start();
-        light.setPosition(1);
-        double[] distances = {32, 29.4, 27.6, 25.7, 23.6, 21.6, 19, 16.5, 13.8, 11, 8.2, 5.6, 3.5, 1.9};
-        double[] servoPositions = {0.05, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85};
-        double[] limelightitp = {226, 202, 176, 154, 129, 107, 89, 71, 54, 45};
-        double[] cm = {12, 15, 18, 21, 24, 27, 30, 33, 36, 39};
-        double[] xsetoff = {255, 255, 253, 251, 245, 242, 240, 237, 233, 230};
-        double[] arrx = {-3, -2, -1, 0, 1, 2, 3, .4, 5, 6, 7, 8};
-        double[] limex = {300 - s, 283 - s, 278 - s, 263 - s, 242 - s, 224 - s, 184 - s, 162 - s, 142 - s, 120 - s, 102 - s, 82 - s};
 
 
         waitForStart();
-
-
-        limelight.pipelineSwitch(3); // Switch to pipeline number 3
-
 
         if (isStopRequested()) return;
 
         Actions.runBlocking(
                 new SequentialAction(
-                        Middle,
-                        mission.releases()
+                        new ParallelAction(
+                                gBlight.lset1(),
+                                Middle,//first speciment Trjectory Moving Path
+                                mission.set(), //Set Top gripper Ready to ng speciment
+                                new SequentialAction(
+                                        new SleepAction(1.5),
+                                        mission.releases()
+                                )
+                        )
+
                 )
         );
+
+//
         LLResult result = limelight.getLatestResult();
         double[] pythonOutput = result.getPythonOutput();
+
+        double tx = pythonOutput[1];
         double ty = pythonOutput[2];
+        double ta = pythonOutput[3];
+//        telemetry.addData("Limelight", " python [1] " + tx);
+//        telemetry.addData("Limelight", " python [2] " + ty);
+//        telemetry.addData("Limelight", " python [3] " + ta);
+        telemetry.update();
+        double kx = 0.045 ;
+        double ky = 0.045;
+        int adjX = 220, adjY=56;
+        double valX = (tx-adjX)*kx; //pre calculate the position
+        //double valY = (ty-adjY)*ky;
+        if(tx==0 && ty==0)valX=0; //if image not found, don't move
 
-        for (byte i = 0; i < 1; i++) {
-//            LLResult result = limelight.getLatestResult();
-//            double[] pythonOutput = result.getPythonOutput();
-            double ax = pythonOutput[1];
-            //double ty = pythonOutput[2];
-            double ta = pythonOutput[3];
-            telemetry.addData("Limelight", ax);
-            telemetry.addData("Limelight", ty);
-            telemetry.addData("Limelight", ta);
-            telemetry.update();
-            ITPS = new ServoInterpolator(limelightitp, xsetoff);
-            double Xsetoff = ITPS.interpolatePosition(ty);
-//            ITPS =new ServoInterpolator(limex,arrx);
-//            double valX = ITPS.interpolatePosition(ax);
+        TrajectoryActionBuilder limelight2 = drive.actionBuilder(second)
+                //.waitSeconds(500)
+                .strafeTo(new Vector2d(30.75, -valX))
+                .waitSeconds(0.5);
+        Pose2d ll = new Pose2d(30.75,-valX,Math.toRadians(0));
 
-            double kx = 0.035;
-            double ky = 0.045;
+        Action T0LL2;
+        T0LL2 = limelight2.build();
 
-            double fX = ax - Xsetoff; //pre calculate the position
-            //double valY = (ty-adjY)*ky;
-            ITPS = new ServoInterpolator(limex, arrx);
-            double valX = ITPS.interpolatePosition(fX);
-            if (ax == 0 && ty == 0) valX = 0; //if image not found, don't move
-            TrajectoryActionBuilder limelight2 = drive.actionBuilder(second)
-                    .lineToX(29.25)
-                    .waitSeconds(1)
-                    .strafeTo(new Vector2d(29.25, valX))
-                    .waitSeconds(0.5);
+        Actions.runBlocking(
+                new SequentialAction(
 
-            Action T0LL2;
-            T0LL2 = limelight2.build();
+                        T0LL2
+                )
+        );
 
 
-            Actions.runBlocking(
-                    new SequentialAction(
 
-                            T0LL2
-                            //gBlight.lset0()
 
-                    )
+//
+//
+        result = limelight.getLatestResult();
+        pythonOutput = result.getPythonOutput();
+        double tx2 = pythonOutput[1];
+        double ty2 = pythonOutput[2];
+        //ta = pythonOutput[3];
+//        telemetry.addData("Limelight", " python [1] " + tx2);
+//        telemetry.addData("Limelight", " python [2] " + ty2);
+        //telemetry.addData("Limelight", " python [3] " + ta);
+        telemetry.update();
+        kx = 0.045 ;
+        ky = 0.045;
+        //double valX = (tx-adjX)*kx; //pre calculate the position
+        // double valY = (ty-adjY)*ky;
 
-            );
+        double valX2 = (tx2-adjX)*kx; //pre calculate the position
+        //double valY2 = (ty2-adjY)*ky*0;
+        if(tx2==0 && ty2==0)valX2=0; //if image not found, don't move
+        TrajectoryActionBuilder limelight3 = drive.actionBuilder(ll)
+                .strafeTo(new Vector2d(30.75,-valX2))
+                //                        .strafeTo(new Vector2d(0,0.1))
+                .waitSeconds(0.5);
+        TrajectoryActionBuilder backtosecond = drive.actionBuilder(ll)
+                .strafeTo(new Vector2d(30.75,0))
+                //                        .strafeTo(new Vector2d(0,0.1))
+                .waitSeconds(0.5);
+        //                        .strafeTo(new Vector2d(0,10));
+
+        Action T0LL3;
+        T0LL3 = limelight3.build();
+
+        Action BTS;
+        BTS = backtosecond.build();
+
+
+
+        Actions.runBlocking(
+                new SequentialAction(
+
+                        T0LL3
+
+                )
+        );
+
+
+        double ny=0;
+
+        for(int i=0; i<10; i++){
             result = limelight.getLatestResult();
             pythonOutput = result.getPythonOutput();
-            double tx = pythonOutput[1];
-            //telemetry.addData("Limelight", targetx);
-            tx = pythonOutput[1];
-            telemetry.addData("Limelight", tx);
-            telemetry.update();
-            sleep(500);
-        }
-        double fix1, fix2 = 0;
-        ITPS = new ServoInterpolator(cm, limelightitp);
-        fix1 = ITPS.interpolatePosition(fix2);
-
-        double ny = 0;
-
-
-        for (int i = 0; i < 1000; i++) {
-            result = limelight.getLatestResult();
-            pythonOutput = result.getPythonOutput();
-            if (pythonOutput[2] != 0) {
+            if(pythonOutput[2]!=0) {
                 if (ny != 0) ny = (ny + pythonOutput[2]) / 2;
                 else ny = pythonOutput[2];
             }
-            //sleep(50);
+            sleep(50);
         }
-        double ta = pythonOutput[3];
-        ITPS = new ServoInterpolator(limelightitp, cm);
 
-        double cmy = ITPS.interpolatePosition(ny);
-
-        ITPS = new ServoInterpolator(distances, servoPositions);
-        double targetServoPosition = ITPS.interpolatePosition(cmy);
-
-        double valY = (110 - ny) * -0.023;
-        double valY2 = (0.8 - (215 - ny) / 180);
-        double valY3 = (0.7 - ((210 - ny) / 200) * 1.2);
-        double valY4 = (0.65 - ((220 - ny) / 220) * 0.7);
-        //double sy = (43.1-cm)/50.8;
-        if (ny == 0) valY = 0;
+        double valY=1.6-(165-ny)/142.5;
+        double valY2=1.8-(215-ny)/180;
+        double valY3=1.7-((210-ny)/200)*1.2;
+        double valY4=1.65-((220-ny)/220)*0.7;
+        if(ny==0)valY=0;
         //double ta = pythonOutput[3];
-        telemetry.addData("raw_ny: ", ny);
-        telemetry.addData("servo_angle", valY);
+//        telemetry.addData("raw_ny: ",ny);
+//        telemetry.addData("servo_angle",valY);
         telemetry.update();
-
-
         Actions.runBlocking(
                 new SequentialAction(
-
-                        new SequentialAction(
-                                mission.slideUP((45 < ta && ta < 135)?1:0.5,targetServoPosition),
-                                new SleepAction(1),
-                                mission.slideIN()// Move more upwards if the arm is very high
-                        ),
-
-
-
-
-
-                        new SleepAction(1),
-                        new SleepAction(20)
+                        (95 < ny && ny < 140) ? // ไกล
+                                new SequentialAction(
+                                        mission.slidebyrange(valY),
+                                        new SleepAction(1)
+                                ) :
+                                (140 <= ny && ny < 170) ? // กลาง
+                                        new SequentialAction(
+                                                mission.slidebyrange(valY2),
+                                                new SleepAction(1)
+                                        ) :
+                                        (ny <= 95 || ny == 0) ? // ไกลสุด
+                                                new SequentialAction(
+                                                        mission.slidebyrange(0),
+                                                        new SleepAction(1)
+                                                ) :
+                                                (170 <= ny && ny < 190) ? // ใกล้
+                                                        new SequentialAction(
+                                                                mission.slidebyrange(valY3),
+                                                                new SleepAction(1)
+                                                        ) :
+                                                        new SequentialAction( // ใกล้สุด
+                                                                mission.slidebyrange(valY4),
+                                                                new SleepAction(1)
+                                                        ),
+                        (45<ta && ta<135) ?
+                                new SequentialAction(
+                                        mission.gripsamperp(),
+                                        new SleepAction(1)
+                                ) :
+                                        new SequentialAction(
+                                                mission.gripsampar(),
+                                                new SleepAction(1)
+                                        ),
+                        new SleepAction(999),
+                        mission.gripdown(),
+                        mission.slideIN()
                 )
         );
 
+
         Actions.runBlocking(
                 new SequentialAction(
+                        BTS,
 
+                        new ParallelAction(
+
+                                Sam1,
+                                new SequentialAction(
+                                        new SleepAction(0.85),
+                                        mission.armDown()
+                                )
+                        ),
 
 
                         new ParallelAction(

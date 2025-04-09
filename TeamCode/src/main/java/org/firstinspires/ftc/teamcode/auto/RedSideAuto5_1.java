@@ -27,8 +27,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 
 @Config
-@Autonomous(name = "RED_AUTO5", group = "Autonomous")
-public class RedSideAuto5 extends LinearOpMode {
+@Autonomous(name = "RED_AUTO5+1", group = "Autonomous")
+public class RedSideAuto5_1 extends LinearOpMode {
 
     public class Lift {
         private DcMotorEx liftR;
@@ -205,7 +205,7 @@ public class RedSideAuto5 extends LinearOpMode {
         public class SlideIN implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                S5.setPosition(0.85);
+                S5.setPosition(0.855);
                 S1.setPosition(0);
                 S4.setPosition(0.97);
                 return false;
@@ -288,7 +288,7 @@ public class RedSideAuto5 extends LinearOpMode {
         Pose2d six = new Pose2d(30.75,-3,Math.toRadians(0));
         Pose2d sev = new Pose2d(30.75,-4,Math.toRadians(0));
         Pose2d exx = new Pose2d(30.75,-5,Math.toRadians(0));
-        Pose2d sam6 = new Pose2d(19,67,Math.toRadians(0));
+        Pose2d sam6 = new Pose2d(19,65,Math.toRadians(0));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Lift lift = new Lift(hardwareMap);
@@ -348,8 +348,8 @@ public class RedSideAuto5 extends LinearOpMode {
                 .strafeTo(new Vector2d(17,64.5),new TranslationalVelConstraint(100))
                 .turnTo(Math.toRadians(-21));
 
-        TrajectoryActionBuilder Tosam11 = drive.actionBuilder (exx)
-//                .strafeTo(new Vector2d(0,-30),new TranslationalVelConstraint(100))
+        TrajectoryActionBuilder Tosam11 = drive.actionBuilder (sam6)
+                .strafeTo(new Vector2d(0,-30),new TranslationalVelConstraint(100))
                 .strafeTo(new Vector2d(6,-40),new TranslationalVelConstraint(100));
 
 
@@ -458,7 +458,22 @@ public class RedSideAuto5 extends LinearOpMode {
                                 mission.releases()
                         ),
                         new ParallelAction(
-                                Sam11
+                                Sam10,
+                                mission.grip(),
+                                lift.liftUp(),
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        mission.setY()
+                                )
+                        ),
+                        mission.reGrip(),
+                        new ParallelAction(
+                                lift.liftDown(),
+
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        Sam11
+                                )
                         ),
                         new SleepAction(1)
 
