@@ -1,25 +1,28 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import android.text.LoginFilter;
-
+import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Drawing;
-import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-@Disabled
 @TeleOp(name = "ATeleopManualv2", group = "TeleOp")
 
 public class ATeleopManualv2 extends LinearOpMode {
@@ -38,9 +41,9 @@ public class ATeleopManualv2 extends LinearOpMode {
 
     private Servo Sarm;
     public int LiftReference;
-    @Override
+    double y = 0;
+
     public void runOpMode() throws InterruptedException {
-        Pose2d initialPose = new Pose2d(-63, -3.5, Math.toRadians(0));
         SRG = hardwareMap.get(Servo.class, "SRG");
         S0 = hardwareMap.get(Servo.class, "S0");
         S1 = hardwareMap.get(Servo.class, "S1");
@@ -69,9 +72,6 @@ public class ATeleopManualv2 extends LinearOpMode {
         double count = 0;
         boolean lastPressDPadLeft = false;
         boolean lastPressDPadRight = false;
-        boolean lock = false;
-
-        int delay = 10000;
 
         telemetry.addData(">", "Press Start");
         telemetry.update();
@@ -81,6 +81,23 @@ public class ATeleopManualv2 extends LinearOpMode {
 
 
         while (opModeIsActive()) {
+            if (gamepad1.y){
+                drive.localizer.setPose(new Pose2d(0, 0, 0));
+            }
+            Pose2d fifth = new Pose2d(0,0,Math.toRadians(0));
+            Pose2d sev = new Pose2d(24,43-y,Math.toRadians(0));
+            TrajectoryActionBuilder Tosam6 = drive.actionBuilder (fifth)
+                    .strafeTo(new Vector2d(24,43-y),new TranslationalVelConstraint(100));
+
+            TrajectoryActionBuilder Tosam7 = drive.actionBuilder (sev)
+
+                    .strafeTo(new Vector2d(0,0),new TranslationalVelConstraint(100));
+            Action Sam6;
+            Action Sam7;
+            Sam6 = Tosam6.build();
+            Sam7 = Tosam7.build();
+
+
             if ( gamepad1.left_stick_y>=0 )
                 if (gamepad1.left_stick_y<0.05)
                     spy = 0;
@@ -144,28 +161,43 @@ public class ATeleopManualv2 extends LinearOpMode {
 
             drive.updatePoseEstimate();
             if (gamepad1.dpad_up) {
-                S0.setPosition(1);
+                Gripper.setPosition(0.08);
+                sleep(70);
+                Smid.setPosition(0.72);
+                SL.setPosition(0.308);
+                SR.setPosition(0.692);
+                Gripper.setPosition(0.165);
+                Actions.runBlocking(Sam6);
+                SR.setPosition(0.208);
+                SL.setPosition(0.792);
+                sleep(250);
+                Gripper.setPosition(0.8);
+                Smid.setPosition(0.67);
+                SRG.setPosition(0.15);
+                Actions.runBlocking(Sam7);
+                y += 0.82;
             } else if (gamepad1.dpad_down) {
 
-                S0.setPosition(0.52);
+                S0.setPosition(0.28);
                 Thread.sleep(245);
-                S0.setPosition(0.875);
-                S5.setPosition(0.8);
+                S0.setPosition(0.6);
+                S5.setPosition(0.825);
                 S1.setPosition(0.5);
                 Thread.sleep(150);
                 S1.setPosition(0);
-                S4.setPosition(0.5);
+                S4.setPosition(1);
             }
             if (gamepad2.dpad_left) {
-                S4.setPosition(0.97);
+                S4.setPosition(0.99);
             } else if (gamepad2.dpad_right) {
                 S4.setPosition(0.5);
             }
             // Adjust Picker Position
             if (gamepad1.dpad_left && !lastPressDPadLeft) {
-                pickPost -= 0.235;
+                pickPost -= 0.249;
                 if (pickPost <= 0) {
                     pickPost = 0.5;
+                    gamepad2.rumbleBlips(1);
                     gamepad1.rumbleBlips(1);
 //                    gamepad1.rumble(500);
 //                    gamepad2.rumble(500);
@@ -173,11 +205,12 @@ public class ATeleopManualv2 extends LinearOpMode {
                 S4.setPosition(pickPost);
 
             } else if (gamepad1.dpad_right && !lastPressDPadRight) {
-                pickPost += 0.235;
+                pickPost += 0.249;
                 if (pickPost >= 1) {
                     pickPost = 0.5;
 //                        gamepad1.rumble(500);
 //                        gamepad2.rumble(500);
+                    gamepad2.rumbleBlips(1);
                     gamepad1.rumbleBlips(1);
                 }
                 S4.setPosition(pickPost);
@@ -191,21 +224,25 @@ public class ATeleopManualv2 extends LinearOpMode {
             telemetry.addData("Position bef", posL);
             telemetry.update();
             LiftReference = liftL.getCurrentPosition();
-
-            if (gamepad1.left_bumper) {
+            if (posL < -2500) {
+                SRG.setPosition(0.73);
+                SR.setPosition(0.57);
+                SL.setPosition(0.43);
+            }else if (gamepad1.left_bumper) {
                 S4.setPosition(0.5);
-                S1.setPosition(1);
-                S0.setPosition(1);
+                Thread.sleep(10);
+                S1.setPosition(0.95);
+                S0.setPosition(0.76);
                 Thread.sleep(100);
                 S5.setPosition(0);
             } else if (gamepad1.right_bumper){
-                S5.setPosition(0.85);
+                S5.setPosition(0.86);
                 Thread.sleep(200);
                 S1.setPosition(0);
                 S4.setPosition(0.5);
             } else if (gamepad2.left_bumper) {
-                SR.setPosition(0.21);
-                SL.setPosition(0.79);
+                SR.setPosition(0.205);
+                SL.setPosition(0.795);
                 Thread.sleep(300);
                 Gripper.setPosition(0.8);
                 Smid.setPosition(0.65);
@@ -213,108 +250,70 @@ public class ATeleopManualv2 extends LinearOpMode {
 
             } else if (gamepad2.right_bumper){
                 Gripper.setPosition(0.8);
-            }
-
-            else if (posL > 2300) {
-                SRG.setPosition(0.57);
-                Smid.setPosition(0.98);
-                SR.setPosition(0.53);
-                SL.setPosition(0.47);
-            }else if (gamepad1.a) {
-//                S5.setPosition(0.1);
-//                SL.setPosition(0.05);
-//                SR.setPosition(0.95);
-//                SRG.setPosition(0.15);
-//                Gripper.setPosition(0.8);
-//                Smid.setPosition(0.25);
-//                S0.setPosition(0.9);
-
-                //get back
+                liftL.setPower(-1);
+                liftR.setPower(1);
+                Thread.sleep(230);
+                SL.setPosition(0.135);
+                SR.setPosition(0.865);
+                liftL.setPower(0);
+                liftR.setPower(0);
+            } else if (gamepad1.b || gamepad2.b){
+                SL.setPosition(0.135);
+                SR.setPosition(0.865);
+                Thread.sleep(50);
+                Gripper.setPosition(0.1);
+                S0.setPosition(1);
+                Thread.sleep(200);
                 SRG.setPosition(0.15);
-                Gripper.setPosition(0.75);
-                SR.setPosition(0.19);
-                SL.setPosition(0.81);
-                Smid.setPosition(0.75);
-//                liftL.setPower(-1);
-//                liftR.setPower(1);
-//                Thread.sleep(400);
+                Smid.setPosition(0.98);
+                SRG.setPosition(0.73);
+                SR.setPosition(0.57);
+                SL.setPosition(0.43);
+            }else if (gamepad1.a || gamepad2.a) {
+                SR.setPosition(0.205);
+                SL.setPosition(0.795);
+                Gripper.setPosition(0.8);
+                Smid.setPosition(0.67);
+                SRG.setPosition(0.175);
+            } else if (gamepad1.y || gamepad2.y) {
+                Gripper.setPosition(0.1);
+                Thread.sleep(70);
+                Smid.setPosition(0.72);
+                SL.setPosition(0.32);
+                SR.setPosition(0.68);
+                Gripper.setPosition(0.171);
+            } else if (gamepad1.x || gamepad2.x){
+                SRG.setPosition(0.73);
+                Gripper.setPosition(0.7);
+                Smid.setPosition(0.35);
+                SL.setPosition(0.2);
+                SR.setPosition(0.8);
             }
 
-            if(lock == false) {
-
-                if (gamepad1.b || gamepad2.b) {
-                    SL.setPosition(0.135);
-                    SR.setPosition(0.865);
-                    Thread.sleep(50);
-                    Gripper.setPosition(0.1);
-                    S0.setPosition(1);
-                    Thread.sleep(200);
-                    SL.setPosition(0.5);
-                    SR.setPosition(0.5);
-                    // Rot 0
-                    SRG.setPosition(0.15);
-                    lock = true;
-                } else if (gamepad1.a || gamepad2.a) {
-                    SR.setPosition(0.21);
-                    SL.setPosition(0.79);
-                    Gripper.setPosition(0.8);
-                    Smid.setPosition(0.65);
-                    SRG.setPosition(0.15);
-                    lock = true;
-                } else if (gamepad1.x || gamepad2.x) {
-                    SRG.setPosition(0.57);
-                    Gripper.setPosition(0.7);
-                    Smid.setPosition(0.7);
-                    SL.setPosition(0.2);
-                    SR.setPosition(0.8);
-                    lock = true;
-                } else if (gamepad1.y || gamepad2.y) {
-                    Gripper.setPosition(0.1);
-                    Thread.sleep(100);
-                    Smid.setPosition(0.6425);
-                    SL.setPosition(0.330);
-                    SR.setPosition(0.670);
-                    Gripper.setPosition(0.175);
-                    lock = true;
-                }
-            }
-
-            if(lock == true){
-                delay--;
-                if(delay <= 0){
-                    lock = false;
-                    delay = 10000;
-                }
-
-            }
 
             if (gamepad1.left_trigger > 0.2 || gamepad2.dpad_down){
-                liftR.setPower(1);
-                liftL.setPower(-1);
-            } else if (gamepad1.right_trigger > 0.2 || gamepad2.dpad_up) {
-//                Smid.setPosition(0);
                 liftR.setPower(-1);
                 liftL.setPower(1);
+                LiftReference = 0;
+                posL = 0;
+            } else if (gamepad1.right_trigger > 0.2 || gamepad2.dpad_up) {
+//                Smid.setPosition(0);
+                liftR.setPower(1);
+                liftL.setPower(-1);
 //                Thread.sleep(550);
 //                Gripper.setPosition(0.8);
             }else {
-
-                liftR.setPower(0.08);
-                liftL.setPower(0.08);
+                liftR.setPower(0.07);
+                liftL.setPower(-0.07);
             }
 
-            ////
-//            if(gamepad2.right_bumper){
-//                SL.setPosition(0.3);
-//                SR.setPosition(0.7);
-//            }
-//            else
+
+
 //            telemetry.addData("x", drive.pose.position.x);
 //            telemetry.addData("y", drive.pose.position.y);
 //            telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
-            sleep(10);
             count = count + 1;
-            telemetry.addData("> : count ", count);
+//            telemetry.addData("> : count ", count);
             telemetry.update();
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay().setStroke("#3F51B5");

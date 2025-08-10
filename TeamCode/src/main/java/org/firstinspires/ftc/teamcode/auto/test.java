@@ -45,8 +45,8 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 @Config
 
 
-@Autonomous(name = "Limelight_Tuning", group = "Autonomous")
-public class limelighttuning extends LinearOpMode {
+@Autonomous(name = "Limelight_", group = "Autonomous")
+public class test extends LinearOpMode {
     public Limelight3A limelight;
     public int adjX = 260;
     public ServoInterpolator ITPS;
@@ -405,9 +405,9 @@ public class limelighttuning extends LinearOpMode {
         Servo s4_hand_rot = hardwareMap.get(Servo.class, "S4");
         Servo light = hardwareMap.get(Servo.class, "light");
         Servo Sllc = hardwareMap.get(Servo.class, "Sllc");
-        s4_hand_rot.setPosition(0.25);
         Sllc.setPosition(0.98);
         light.setPosition(1);
+        s4_hand_rot.setPosition(0.25);
         s5_arm_range.setPosition(0.8);
         // sleep(100000);
 
@@ -417,33 +417,33 @@ public class limelighttuning extends LinearOpMode {
 
 
 
-        int ix=0;
-
-
-        while(ix<10000) {
-            LLResult result = limelight.getLatestResult();
-            double[] pythonOutput = result.getPythonOutput();
-            telemetry.addData("Limelight", pythonOutput[1]);
-            telemetry.addData("Limelight", pythonOutput[2]);
-            telemetry.addData("Limelight", pythonOutput[3]);
-            double tx = pythonOutput[1]-270;
-            double ty = pythonOutput[2]-169;
-            double ta = pythonOutput[3];
-
-//            if (result != null && result.isValid()) {
-//             // How far up or down the target is (degrees)
-////                double ta ;  // How big the target looks (0%-100% of the image)
-////
-////                telemetry.addData("Target X", tx);
-////                telemetry.addData("Target Y", ty);
-////                telemetry.addData("Target Area", ta);
-//            } else {
-//                telemetry.addData("Limelight", "No Targets" +ix);
-//            }
-            telemetry.update();
-            sleep(300);
-            ix++;
-        }
+//        int ix=0;
+//
+//
+//        while(ix<10000) {
+//            LLResult result = limelight.getLatestResult();
+//            double[] pythonOutput = result.getPythonOutput();
+//            telemetry.addData("Limelight", pythonOutput[1]);
+//            telemetry.addData("Limelight", pythonOutput[2]);
+//            telemetry.addData("Limelight", pythonOutput[3]);
+//            double tx = pythonOutput[1]-270;
+//            double ty = pythonOutput[2]-169;
+//            double ta = pythonOutput[3];
+//
+////            if (result != null && result.isValid()) {
+////             // How far up or down the target is (degrees)
+//////                double ta ;  // How big the target looks (0%-100% of the image)
+//////
+//////                telemetry.addData("Target X", tx);
+//////                telemetry.addData("Target Y", ty);
+//////                telemetry.addData("Target Area", ta);
+////            } else {
+////                telemetry.addData("Limelight", "No Targets" +ix);
+////            }
+//            telemetry.update();
+//            sleep(300);
+//            ix++;
+//        }
 
 
         Mission2 mission2 = new Mission2(hardwareMap);
@@ -499,71 +499,71 @@ public class limelighttuning extends LinearOpMode {
                         new SleepAction(2)
                 )
         );
-        limelight.pipelineSwitch(4);
+        double ty = 0;
 
 
         LLResult result = limelight.getLatestResult();
-        double[] pythonOutput= result.getPythonOutput();
-
-        double ax = pythonOutput[1],ty = pythonOutput[2],ta = pythonOutput[3];
-
+        double[] pythonOutput;
         if (result != null) {
 
             pythonOutput = result.getPythonOutput();
             //double ty = pythonOutput[2];
+            double h = 1;
 
 
+            for (byte i = 0; i < 1; i++) {
+//            LLResult result = limelight.getLatestResult();
+//            double[] pythonOutput = result.getPythonOutput();
+                double ax = pythonOutput[1];
+                ty = pythonOutput[2];
+                double ta = pythonOutput[3];
+                telemetry.addData("Limelight", ax);
+                telemetry.addData("Limelight", ty);
+                telemetry.addData("Limelight", ta);
+                telemetry.update();
+                ITPS = new ServoInterpolator(limelightitp, cm);
+                double Xcm = ITPS.interpolatePosition(ty);
+                ITPS = new ServoInterpolator(cmx,xsetoff);
+                double Xoffset = ITPS.interpolatePosition(Xcm);
+                double kx = 0.035;
+                double ky = 0.045;
 
 
-//           LLResult result = limelight.getLatestResult();
-//           double[] pythonOutput = result.getPythonOutput();
+                double fX = ax - Xoffset; //pre calculate the position
+                double valY = (ty - 168) * ky;
+                ITPS = new ServoInterpolator(limex, arrx);
+                double valX = ITPS.interpolatePosition(fX);
 
-            telemetry.addData("Limelight", ax);
-            telemetry.addData("Limelight", ty);
-            telemetry.addData("Limelight", ta);
-            telemetry.update();
-            ITPS = new ServoInterpolator(limelightitp, cm);
-            double Xcm = ITPS.interpolatePosition(ty);
-            ITPS = new ServoInterpolator(cmx,xsetoff);
-            double Xoffset = ITPS.interpolatePosition(Xcm);
-            double kx = 0.035;
-            double ky = 0.045;
+                if (ax == 0 && ty == 0) valX = 0; //if image not found, don't move
+                TrajectoryActionBuilder limelight2 = drive.actionBuilder(initialPose)
+                        //.waitSeconds(500)
+                        .strafeTo(new Vector2d(0, valX));
+                h = h / 2;
 
 
-            double fX = ax - Xoffset; //pre calculate the position
-            double valY = (ty - 168) * ky;
-            ITPS = new ServoInterpolator(limex, arrx);
-            double valX = ITPS.interpolatePosition(fX);
-
-            if (ax == 0 && ty == 0) valX = 0; //if image not found, don't move
-            TrajectoryActionBuilder limelight2 = drive.actionBuilder(initialPose)
-                    //.waitSeconds(500)
-                    .strafeTo(new Vector2d(0, valX));
+                //.waitSeconds(0.5);
 
 
-
-            //.waitSeconds(0.5);
-
-
-            Action T0LL2;
-            T0LL2 = limelight2.build();
+                Action T0LL2;
+                T0LL2 = limelight2.build();
 
 
-            Actions.runBlocking(
-                    new SequentialAction(
-                            T0LL2
-                    )
+                Actions.runBlocking(
+                        new SequentialAction(
+                                T0LL2
+                        )
 
 
-            );
-            result = limelight.getLatestResult();
-            pythonOutput = result.getPythonOutput();
-            double tx = pythonOutput[1];
-            //telemetry.addData("Limelight", targetx);
-            tx = pythonOutput[1];
-            telemetry.addData("Limelight", tx);
-            telemetry.update();
-            sleep(500);
+                );
+                result = limelight.getLatestResult();
+                pythonOutput = result.getPythonOutput();
+                double tx = pythonOutput[1];
+                //telemetry.addData("Limelight", targetx);
+                tx = pythonOutput[1];
+                telemetry.addData("Limelight", tx);
+                telemetry.update();
+                sleep(500);
+            }
             double fix1, fix2 = 0;
             ITPS = new ServoInterpolator(cm, limelightitp);
             fix1 = ITPS.interpolatePosition(fix2);
@@ -577,7 +577,7 @@ public class limelighttuning extends LinearOpMode {
         double ny = pythonOutput[2];
 
         //sleep(50);
-        //double ta = pythonOutput[3];
+        double ta = pythonOutput[3];
         ITPS = new ServoInterpolator(limelightitp2, cm2);
 
 
@@ -586,19 +586,19 @@ public class limelighttuning extends LinearOpMode {
 
         ITPS = new ServoInterpolator(distances, servoPositions);
         double targetServoPosition = ITPS.interpolatePosition(cmy);
-
-        double angle = 0;
-        if(ta>150 || ta<30)angle=0;
-        else if(ta>75 && ta<115)angle=0.5;
-        else if(ta>30 && ta<90)angle=0.25;
-        else if(ta<150 && ta>90)angle=0.75;
+        double angle;
+        if(ta>112.5 && ta<157.5)angle=0.25;
+        else if(ta>67.5 && ta<112.5)angle=1;
+        else if(ta>22.5 && ta<67.5)angle=0.75;
+        else angle=0.5;
         Actions.runBlocking(
                 new SequentialAction(
                         new SequentialAction(
-                                mission2.slideFullUP(angle, targetServoPosition),
+                                mission2.slideFullUP(angle,targetServoPosition),
+                                // Move more upwards if the arm is very high
                                 new SleepAction(2),
                                 mission2.test0(),
-                                new SleepAction(10)
+                                new SleepAction(2)
 
                         )
 

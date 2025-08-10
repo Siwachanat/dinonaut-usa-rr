@@ -446,14 +446,14 @@ public class RedSideAuto6 extends LinearOpMode {
 
         TrajectoryActionBuilder Tomid = drive.actionBuilder (initialPose)
                 .splineToSplineHeading(new Pose2d(31.5,0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-60,80));
-        limelight.start(); // This tells Limelight to start looking!
+                limelight.start(); // This tells Limelight to start looking!
 //        TrajectoryActionBuilder Tosub = drive.actionBuilder (second)
 //                .strafeTo(new Vector2d(2,tx),null,new ProfileAccelConstraint(-30,30));
 
 
         TrajectoryActionBuilder Tosam1 = drive.actionBuilder (second)
                 //.strafeTo(new Vector2d(26,-8),null,new ProfileAccelConstraint(-100,100))
-                .splineToSplineHeading(new Pose2d(26,-0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-100,100))
+                .splineToSplineHeading(new Pose2d(26,0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-100,100))
                 .splineToLinearHeading(new Pose2d(8.5,-25,-Math.PI*5.5/6 ),-Math.PI*1.5,new TranslationalVelConstraint(100))
                 .stopAndAdd(mission.slideFullUP())
                 .stopAndAdd(mission.slideIN())

@@ -280,11 +280,11 @@ public class RedSideAuto5 extends LinearOpMode {
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
         Pose2d second = new Pose2d(30.75,0,Math.toRadians(0));
-        Pose2d third = new Pose2d(5.2,-35,Math.toRadians(0));
+        Pose2d third = new Pose2d(5.2,-39,Math.toRadians(0));
         Pose2d forth = new Pose2d(30.75,-2,Math.toRadians(0));
         Pose2d forthfixed = new Pose2d(25,-2,Math.toRadians(0));
-        Pose2d fifth = new Pose2d(6,-35,Math.toRadians(0));
-        Pose2d fifth2 = new Pose2d(5.5,-35,Math.toRadians(0));
+        Pose2d fifth = new Pose2d(7,-39,Math.toRadians(0));
+        Pose2d fifth2 = new Pose2d(6,-39,Math.toRadians(0));
         Pose2d six = new Pose2d(30.75,-3,Math.toRadians(0));
         Pose2d sev = new Pose2d(30.75,-4,Math.toRadians(0));
         Pose2d exx = new Pose2d(30.75,-5,Math.toRadians(0));
@@ -299,19 +299,19 @@ public class RedSideAuto5 extends LinearOpMode {
         TrajectoryActionBuilder Tosam1 = drive.actionBuilder (second)
                 //.strafeTo(new Vector2d(26,-8),null,new ProfileAccelConstraint(-100,100))
                 .splineToSplineHeading(new Pose2d(26,-0,Math.PI*2),Math.PI*2,null,new ProfileAccelConstraint(-100,100))
-                .splineToConstantHeading(new Vector2d(24,-16),-Math.PI*0.5,new TranslationalVelConstraint(100))
+                .splineToConstantHeading(new Vector2d(24,-20),-Math.PI*0.5,new TranslationalVelConstraint(100))
                 .splineToLinearHeading(new Pose2d(30.5,-30,-Math.PI/3.5 ),-Math.PI*1.5,new TranslationalVelConstraint(100))
                 .splineToLinearHeading(new Pose2d(18 ,-35.5,-Math.PI*4.3/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
 
-                .splineToLinearHeading(new Pose2d(30,-34.5,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
-                .splineToLinearHeading(new Pose2d(33,-40,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(30,-33,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(34,-40,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
                 .splineToLinearHeading(new Pose2d(21,-40,-Math.PI*4.5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
 
                 .splineToLinearHeading(new Pose2d(30,-42,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
                 .splineToLinearHeading(new Pose2d(33,-45.5,-Math.PI/3.5 ),-Math.PI*0.3,new TranslationalVelConstraint(100))
                 .splineToLinearHeading(new Pose2d(21,-46,-Math.PI*4.5/6),-Math.PI*1.5,new TranslationalVelConstraint(100))
 
-                .splineToLinearHeading(new Pose2d(5.2 ,-35,-Math.PI*2),-Math.PI*1.5,new TranslationalVelConstraint(90));
+                .splineToLinearHeading(new Pose2d(5.2 ,-39,-Math.PI*2),-Math.PI*1.5,new TranslationalVelConstraint(90));
 
         TrajectoryActionBuilder Tosam2 = drive.actionBuilder (third)
                 .strafeTo(new Vector2d(30.75,-2),new TranslationalVelConstraint(100));
@@ -320,13 +320,13 @@ public class RedSideAuto5 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(25,-2),Math.PI*2,new TranslationalVelConstraint(80));
 
         TrajectoryActionBuilder Tosam3fix = drive.actionBuilder (forthfixed)
-                .strafeTo(new Vector2d(6,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(7,-39),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam4 = drive.actionBuilder (fifth)
                 .strafeTo(new Vector2d(30.75,-3),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam5 = drive.actionBuilder (six)
-                .strafeTo(new Vector2d(6,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(7,-39),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam6 = drive.actionBuilder (fifth)
 
@@ -334,7 +334,7 @@ public class RedSideAuto5 extends LinearOpMode {
 
         TrajectoryActionBuilder Tosam7 = drive.actionBuilder (sev)
 
-                .strafeTo(new Vector2d(6,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(7,-39),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam8 = drive.actionBuilder (fifth)
 
@@ -342,15 +342,15 @@ public class RedSideAuto5 extends LinearOpMode {
 
         TrajectoryActionBuilder Tosam9 = drive.actionBuilder (exx)
 
-                .strafeTo(new Vector2d(5.5,-35),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(6,-39),new TranslationalVelConstraint(100));
 
         TrajectoryActionBuilder Tosam10 = drive.actionBuilder (fifth2)
                 .strafeTo(new Vector2d(17,64.5),new TranslationalVelConstraint(100))
                 .turnTo(Math.toRadians(-21));
 
-        TrajectoryActionBuilder Tosam11 = drive.actionBuilder (exx)
+        TrajectoryActionBuilder Tosam11 = drive.actionBuilder (fifth2)
 //                .strafeTo(new Vector2d(0,-30),new TranslationalVelConstraint(100))
-                .strafeTo(new Vector2d(6,-40),new TranslationalVelConstraint(100));
+                .strafeTo(new Vector2d(6,-50),new TranslationalVelConstraint(100));
 
 
 

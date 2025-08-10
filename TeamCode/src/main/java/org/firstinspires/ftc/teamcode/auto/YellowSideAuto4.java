@@ -186,6 +186,25 @@ public class YellowSideAuto4 extends LinearOpMode {
             return new Re();
         }
 
+        public class Re2 implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                SR.setPosition(0.48);
+                SL.setPosition(0.52);
+                Gripper.setPosition(0.8);
+                sleep(150);
+                SRG.setPosition(0.73);
+                Gripper.setPosition(0.7);
+                Smid.setPosition(0.35);
+                SL.setPosition(0.4);
+                SR.setPosition(0.6);
+
+                return false;
+            }
+        }
+        public Action releases2() {
+            return new Re2();
+        }
         public class SlideFullUP implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -250,7 +269,7 @@ public class YellowSideAuto4 extends LinearOpMode {
                 S0.setPosition(0.28);
                 sleep(245);
                 S0.setPosition(0.6);
-                S5.setPosition(0.842);
+                S5.setPosition(0.75);
                 sleep(300);
                 S1.setPosition(0.5);
                 sleep(150);
@@ -370,7 +389,7 @@ public class YellowSideAuto4 extends LinearOpMode {
                         mission.set(),
                         new ParallelAction(
                                 lift.liftUp(),
-                                mission.slideFullUP45(),
+                                mission.slideFullUP(),
                                 sam1
                         ),
                         mission.releases(),
@@ -416,7 +435,8 @@ public class YellowSideAuto4 extends LinearOpMode {
 
 
                         ),
-                        Bas4
+                        new SleepAction(1)
+                        //Bas4
 
 
                 )

@@ -85,9 +85,9 @@ public class Teleop extends LinearOpMode {
                  drive.localizer.setPose(new Pose2d(0, 0, 0));
             }
             Pose2d fifth = new Pose2d(0,0,Math.toRadians(0));
-            Pose2d sev = new Pose2d(26.5,43-y,Math.toRadians(0));
+            Pose2d sev = new Pose2d(24,43-y,Math.toRadians(0));
             TrajectoryActionBuilder Tosam6 = drive.actionBuilder (fifth)
-                    .strafeTo(new Vector2d(27.45,43-y),new TranslationalVelConstraint(100));
+                    .strafeTo(new Vector2d(24,43-y),new TranslationalVelConstraint(100));
 
             TrajectoryActionBuilder Tosam7 = drive.actionBuilder (sev)
 
@@ -181,7 +181,7 @@ public class Teleop extends LinearOpMode {
                 S0.setPosition(0.28);
                 Thread.sleep(245);
                 S0.setPosition(0.6);
-                S5.setPosition(0.825);
+                S5.setPosition(0.75);
                 S1.setPosition(0.5);
                 Thread.sleep(150);
                 S1.setPosition(0);
@@ -267,8 +267,8 @@ public class Teleop extends LinearOpMode {
                 SR.setPosition(0.57);
                 SL.setPosition(0.43);
             }else if (gamepad1.a || gamepad2.a) {
-                SR.setPosition(0.205);
                 SL.setPosition(0.795);
+                SR.setPosition(0.205);
                 Gripper.setPosition(0.8);
                 Smid.setPosition(0.67);
                 SRG.setPosition(0.175);
@@ -276,8 +276,8 @@ public class Teleop extends LinearOpMode {
                 Gripper.setPosition(0.1);
                 Thread.sleep(70);
                 Smid.setPosition(0.72);
-                SL.setPosition(0.32);
-                SR.setPosition(0.68);
+                SL.setPosition(0.25);
+                SR.setPosition(0.75);
                 Gripper.setPosition(0.171);
             } else if (posL < -2500) {
                 SRG.setPosition(0.73);
